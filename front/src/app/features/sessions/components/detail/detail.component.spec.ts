@@ -39,7 +39,7 @@ describe('DetailComponent', () => {
     description: 'Description Test',
     date: new Date(),
     teacher_id: 2,
-    users: []
+    users: [1]
   };
 
   beforeEach(async () => {
@@ -81,6 +81,7 @@ describe('DetailComponent', () => {
     beforeEach(() => {
       sessionApiServiceSpy = jest.spyOn(sessionApiService, 'detail').mockReturnValue(of(sessionMock));
       teacherServiceSpy = jest.spyOn(teacherService, 'detail').mockReturnValue(of({} as Teacher));
+
     })
 
     it('should fetch session information on init', () => {
@@ -89,14 +90,12 @@ describe('DetailComponent', () => {
 
       expect(sessionApiServiceSpy).toHaveBeenCalledWith(component.sessionId);
       expect(component.session).toEqual(sessionMock);
-      // do I need to test this?
-      // expect(component.isParticipate).toBeTruthy();
+      expect(component.isParticipate).toBeTruthy();
       expect(teacherServiceSpy).toHaveBeenCalledWith(sessionMock.teacher_id.toString());
     });
 
     it('should display delete button for admin', () => {
 
-      // can I put this in beforeEach?
       component.ngOnInit();
       fixture.detectChanges();
 
@@ -107,7 +106,6 @@ describe('DetailComponent', () => {
     });
   })
 
-  // Suppression session ✅
   it('should delete session and navigate to sessions', () => {
     const matSnackBarSpy = jest.spyOn(matSnackBar, 'open').mockImplementation();
     const sessionApiServiceSpy = jest
