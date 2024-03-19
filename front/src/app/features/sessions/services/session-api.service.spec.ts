@@ -1,30 +1,85 @@
-import {fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {fakeAsync, TestBed} from '@angular/core/testing';
 import {expect} from '@jest/globals';
 
 import {SessionApiService} from './session-api.service';
-import {HttpClientTestingModule, HttpTestingController} from "@angular/common/http/testing";
+import {HttpClientTestingModule, HttpTestingController, TestRequest} from "@angular/common/http/testing";
 import {Observable, of} from "rxjs";
+import {Session} from "../interfaces/session.interface";
 
 describe('SessionsService', () => {
-  let mockServiceApi: SessionApiService;
-  let mockHttpClient: HttpTestingController;
+  let serviceApiMock: SessionApiService;
+  let httpClientMock: HttpTestingController;
 
+  const sessionsMock: Session[] = [{
+    name: 'Test',
+    description: 'Description Test',
+    date: new Date(),
+    teacher_id: 2,
+    users: []
+  }];
+
+  const sessionMock: Session = {
+    name: 'Test',
+    description: 'Description Test',
+    date: new Date(),
+    teacher_id: 2,
+    users: [1]
+  };
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
       providers: [SessionApiService],
     });
-    mockServiceApi = TestBed.inject(SessionApiService);
-    mockHttpClient = TestBed.inject(HttpTestingController);
+    serviceApiMock = TestBed.inject(SessionApiService);
+    httpClientMock = TestBed.inject(HttpTestingController);
   });
 
   afterEach(() => {
-    mockHttpClient.verify();
+    httpClientMock.verify();
   });
 
   it('should be created', () => {
-    expect(mockServiceApi).toBeTruthy();
+    expect(serviceApiMock).toBeTruthy();
+  });
+
+  it('should retrieve all sessions from the API via GET', () => {
+    serviceApiMock.all().subscribe(sessions => {
+      expect(sessions).toEqual(sessionsMock);
+    });
+    const request: TestRequest = httpClientMock.expectOne('api/session');
+    expect(request.request.method).toBe('GET');
+    request.flush(sessionsMock);
+  });
+
+  it('should retrieve session detail from the API via GET', () => {
+    serviceApiMock.detail('1').subscribe(session => {
+      expect(session).toEqual(sessionMock);
+    });
+    const request: TestRequest = httpClientMock.expectOne('api/session/1');
+    expect(request.request.method).toBe('GET');
+    request.flush(sessionsMock);
+  });
+
+  it('should create session via POST', () => {
+    serviceApiMock.create(sessionMock).subscribe(session => {
+      expect(session).toEqual(sessionMock);
+    });
+    const request: TestRequest = httpClientMock.expectOne('api/session');
+    expect(request.request.method).toBe('POST');
+    expect(request.request.body).toEqual(sessionMock);
+    request.flush(sessionsMock);
+  });
+
+  it('should update session via PUT', () => {
+    const sessionId: string = '1';
+    serviceApiMock.update(sessionId, sessionMock).subscribe(session => {
+      expect(session).toEqual(sessionMock);
+    });
+    const request: TestRequest = httpClientMock.expectOne(`api/session/${sessionId}`);
+    expect(request.request.method).toBe('PUT');
+    expect(request.request.body).toEqual(sessionMock);
+    request.flush(sessionsMock);
   });
 
   describe('participate', () => {
@@ -36,24 +91,24 @@ describe('SessionsService', () => {
       userId = '456';
     });
 
-    it('should send a DELETE request to the correct URL with the given parameters', () => {
-      const expectedUrl = `api/session/${id}/participate/${userId}`;
-      const serviceApiSpy = jest
-        .spyOn(mockServiceApi, 'participate')
+    it('should send a POST request to the correct URL with the given parameters', () => {
+      const expectedUrl: string = `api/session/${id}/participate/${userId}`;
+      const serviceApiMockApiSpy = jest
+        .spyOn(serviceApiMock, 'participate')
         .mockReturnValue(of(undefined));
-      const observable = mockServiceApi.participate(id, userId);
+      const observable = serviceApiMock.participate(id, userId);
 
-      expect(serviceApiSpy).toHaveBeenCalledWith(id, userId);
+      expect(serviceApiMockApiSpy).toHaveBeenCalledWith(id, userId);
       expect(observable).toBeInstanceOf(Observable);
 
       observable.subscribe({
         next: () => {
-          const req = mockHttpClient.expectOne(expectedUrl);
+          const req: TestRequest = httpClientMock.expectOne(expectedUrl);
 
           expect(req.request.method).toBe('POST');
           expect(req.request.body).toBeNull();
 
-          req.flush(null, { status: 200, statusText: 'Success' });
+          req.flush(null, {status: 200, statusText: 'Success'});
         },
       });
     });
@@ -69,19 +124,19 @@ describe('SessionsService', () => {
     });
 
     it('should send a DELETE request to the correct URL with the given parameters', () => {
-      mockServiceApi.unParticipate(id, userId).subscribe(data => {
+      serviceApiMock.unParticipate(id, userId).subscribe(data => {
         expect(data).toEqual(null);
       });
 
-      const req = mockHttpClient.expectOne(`api/session/${id}/participate/${userId}`);
+      const req: TestRequest = httpClientMock.expectOne(`api/session/${id}/participate/${userId}`);
       expect(req.request.method).toBe('DELETE');
 
       req.flush(null);
     });
 
     it('should return an observable of void on successful delete', fakeAsync(() => {
-      jest.spyOn(mockServiceApi, 'unParticipate').mockReturnValue(of(undefined));
-      const observable = mockServiceApi.unParticipate(id, userId);
+      jest.spyOn(serviceApiMock, 'unParticipate').mockReturnValue(of(undefined));
+      const observable: Observable<void> = serviceApiMock.unParticipate(id, userId);
 
       expect(observable).toBeInstanceOf(Observable);
       observable.subscribe({
