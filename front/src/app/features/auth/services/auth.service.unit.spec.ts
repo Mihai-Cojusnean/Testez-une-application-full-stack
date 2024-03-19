@@ -1,5 +1,5 @@
 import {AuthService} from "./auth.service";
-import {HttpClientTestingModule, HttpTestingController} from "@angular/common/http/testing";
+import {HttpClientTestingModule, HttpTestingController, TestRequest} from "@angular/common/http/testing";
 import {TestBed} from "@angular/core/testing";
 import {RegisterRequest} from "../interfaces/registerRequest.interface";
 import {LoginRequest} from "../interfaces/loginRequest.interface";
@@ -48,7 +48,7 @@ describe('AuthService', () => {
 
     authService.register(registerRequest).subscribe();
 
-    const req = httpTestingController.expectOne('api/auth/register');
+    const req: TestRequest = httpTestingController.expectOne('api/auth/register');
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual(registerRequest);
   });
@@ -58,7 +58,7 @@ describe('AuthService', () => {
 
     authService.login(loginRequest).subscribe();
 
-    const req = httpTestingController.expectOne('api/auth/login');
+    const req: TestRequest = httpTestingController.expectOne('api/auth/login');
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual(loginRequest);
   });
