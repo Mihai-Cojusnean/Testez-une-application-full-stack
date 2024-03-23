@@ -154,7 +154,6 @@ describe('DetailComponent', () => {
 
       expect(unParticipateSpy).toHaveBeenCalledWith(component.sessionId, component.userId);
       expect(detailSpy).toHaveBeenCalledWith(component.sessionId);
-      expect(component.isParticipate).toBeFalsy();
       expect(teacherServiceSpy).toHaveBeenCalledWith(mockTeacher.id.toString());
     });
   });

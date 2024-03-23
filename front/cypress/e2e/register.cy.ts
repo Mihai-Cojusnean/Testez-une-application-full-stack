@@ -10,11 +10,12 @@ describe('Register Component', () => {
   });
 
   it('should successfully register with valid information', () => {
-    cy.intercept('POST', '/api/auth/register', {})
+    cy.intercept('POST', '/api/auth/register', {statusCode: 200}).as('register');
+
     cy.get('[formControlName="firstName"]').type('John');
     cy.get('[formControlName="lastName"]').type('Doe');
     cy.get('[formControlName="email"]').type('yoga@studio.com');
-    cy.get('[formControlName="password"]').type(`${"test!1234"}{enter}{enter}`);
+    cy.get('[formControlName="password"]').type(`test!1234{enter}{enter}`);
 
     cy.url().should('include', '/login')
   });
@@ -29,13 +30,13 @@ describe('Register Component', () => {
   });
 
   it('should display an error if email already exists', () => {
-    cy.intercept('POST', '/api/auth/register', { statusCode: 400 })
+    cy.intercept('POST', '/api/auth/register', {statusCode: 400})
 
     cy.get('[formControlName="firstName"]').type('John');
     cy.get('[formControlName="lastName"]').type('Doe');
     cy.get('[formControlName="email"]').type('yoga@studio.com');
-    cy.get('[formControlName="password"]').type(`${"test!1234"}{enter}{enter}`);
+    cy.get('[formControlName="password"]').type(`test!1234{enter}{enter}`);
 
     cy.contains('An error occurred')
-  })
+  });
 });

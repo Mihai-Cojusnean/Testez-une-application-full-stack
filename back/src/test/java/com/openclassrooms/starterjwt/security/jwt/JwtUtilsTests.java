@@ -75,4 +75,36 @@ public class JwtUtilsTests {
         assertFalse(isValid);
     }
 
+    @Test
+    public void testValidateJwtToken_ExpiredToken() {
+        String token = Jwts.builder()
+                .setSubject("Test user")
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis()))
+                .signWith(SignatureAlgorithm.HS512, "secret")
+                .compact();
+        boolean isValid = jwtUtils.validateJwtToken(token);
+
+        assertFalse(isValid);
+    }
+
+    @Test
+    public void testValidateJwtToken_InvalidSignature() {
+        String token = Jwts.builder()
+                .setSubject("Test user")
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + 3600000))
+                .signWith(SignatureAlgorithm.HS512, "invalid")
+                .compact();
+        boolean isValid = jwtUtils.validateJwtToken(token);
+
+        assertFalse(isValid);
+    }
+
+    @Test
+    public void testValidateJwtToken_EmptyClaimsString() {
+        boolean isValid = jwtUtils.validateJwtToken("");
+
+        assertFalse(isValid);
+    }
 }

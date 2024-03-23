@@ -13,7 +13,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -49,6 +48,7 @@ public class UserDetailsServiceImplTests {
 
         assertNotNull(userDetails);
         assertEquals(username, userDetails.getUsername());
+        assertEquals(user.getEmail(), userDetails.getUsername());
         verify(userRepo, times(1)).findByEmail(eq(username));
     }
 
