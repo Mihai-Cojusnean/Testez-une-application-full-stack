@@ -60,7 +60,7 @@ To operate the application:
 
 To launch unit tests with Jest:
 
-1. Navigate to the `frontend/` directory.
+1. Navigate to the `front/` directory.
 2. Run `npm run test` to execute the Jest unit tests.
 3. View test results in the console.
 
@@ -68,7 +68,7 @@ To launch unit tests with Jest:
 
 To launch end-to-end tests with Cypress:
 
-1. Navigate to the `frontend/` directory.
+1. Navigate to the `front/` directory.
 2. Run `npm run e2e` to execute the Cypress end-to-end tests.
 3. Cypress test runner will open, allowing you to interact with the tests.
 
@@ -76,7 +76,7 @@ To launch end-to-end tests with Cypress:
 
 To launch integration tests with JUnit:
 
-1. Navigate to the `backend/` directory.
+1. Navigate to the `back/` directory.
 2. Run `mvn test` to execute the JUnit integration tests.
 3. Test results will be output to the console, and JUnit XML reports will be generated in the `target/surefire-reports/`
    directory.
@@ -86,10 +86,10 @@ To launch integration tests with JUnit:
 To generate coverage reports:
 
 1. For frontend:
-    - Navigate to the `frontend/` directory.
+    - Navigate to the `front/` directory.
     - Run `npm run test:coverage` to generate coverage reports using Jest. Reports will be available in the `coverage/`
       directory.
 2. For backend:
-    - Navigate to the `backend/` directory.
+    - Navigate to the `back/` directory.
     - Run `mvn clean test` to generate coverage reports using JaCoCo. Reports will be available in
       the `target/site/jacoco/` directory.

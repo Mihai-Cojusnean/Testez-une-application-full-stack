@@ -1,55 +1,65 @@
-import {HttpClientModule} from '@angular/common/http';
-import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {MatCardModule} from '@angular/material/card';
 import {MatIconModule} from '@angular/material/icon';
 import {expect} from '@jest/globals';
 import {SessionService} from 'src/app/services/session.service';
 
 import {ListComponent} from './list.component';
-import {Observable, of} from "rxjs";
+import {of} from "rxjs";
 import {SessionApiService} from "../../services/session-api.service";
 import {Session} from "../../interfaces/session.interface";
-import {SessionInformation} from "../../../../interfaces/sessionInformation.interface";
 import {HttpClientTestingModule} from "@angular/common/http/testing";
+import {By} from "@angular/platform-browser";
+import {SessionInformation} from "../../../../interfaces/sessionInformation.interface";
+import {DebugElement} from "@angular/core";
 
 describe('ListComponent', () => {
   let component: ListComponent;
   let fixture: ComponentFixture<ListComponent>;
   let sessionService: SessionService;
-  let sessionApiService: SessionApiService;
+  let sessionApiService: any;
 
-  const mockSessionService = {
-    sessionInformation: {
-      admin: true
-    }
-  }
+  const sessionInformation: SessionInformation = {
+    token: "",
+    type: "",
+    id: 1,
+    username: "",
+    firstName: "",
+    lastName: "",
+    admin: true
+  };
 
-  const sessions: Session[] = [{
-    name: 'Test',
-    description: 'Description Test',
+  const sessionsMock: Session[] = [{
+    name: 'Session 1',
+    description: 'Session description 1',
     date: new Date(),
     teacher_id: 2,
-    users: []
+    users: [1, 2, 3],
+    createdAt: new Date(),
+    updatedAt: new Date()
   }];
 
-  // const mockApiService = {
-  //   all: () => of(sessions)
-  // }
-
   beforeEach(async () => {
+
+    sessionApiService = {
+      all: jest.fn().mockReturnValue(of([]))
+    };
+
     await TestBed.configureTestingModule({
       declarations: [ListComponent],
       imports: [HttpClientTestingModule, MatCardModule, MatIconModule],
       providers: [
-        // {provide: SessionApiService, useValue: mockApiService},
-        {provide: SessionService, useValue: mockSessionService},
+        {provide: SessionApiService, useValue: sessionApiService}
       ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(ListComponent);
-    component = fixture.componentInstance;
     sessionService = TestBed.inject(SessionService);
+    sessionService.sessionInformation = sessionInformation;
     sessionApiService = TestBed.inject(SessionApiService);
+
+    component = fixture.componentInstance;
+    component.sessions$ = of(sessionsMock);
 
     fixture.detectChanges();
   });
@@ -59,73 +69,59 @@ describe('ListComponent', () => {
   });
 
   it('should set sessions$ correctly', () => {
-
-    jest.spyOn(sessionApiService, 'all').mockReturnValue(of(sessions));
-
     fixture.detectChanges();
 
-    component.sessions$.subscribe((sessionList) => {
-      // I'm not reaching this line
-      expect(sessionList).toEqual(sessions);
-    });
+    expect(sessionApiService.all).toHaveBeenCalled();
+    expect(sessionApiService.all).toHaveBeenCalledTimes(1);
   });
 
   it('should get user information from sessionService', () => {
-    const mockSessionInformation: SessionInformation = {
-      token: '',
-      type: '',
-      id: 1,
-      username: '',
-      firstName: '',
-      lastName: '',
-      admin: true,
-    };
-    sessionService.sessionInformation = mockSessionInformation;
     const user = component.user;
 
     fixture.detectChanges();
 
-    expect(user).toEqual(mockSessionInformation);
+    expect(user).toEqual(sessionInformation);
   });
 
-  it('should display Create and Edit buttons for admin user', async () => {
+  describe('Displayed buttons', () => {
+    /* buttons
+    if ADMIN:
+       1. create
+       2. detail
+       3. edit
+    if USER:
+       only - detail
+    */
 
-    const sessionApiServiceSpy = jest
-      .spyOn(sessionApiService, 'all')
-      .mockReturnValue(of(sessions));
+    it('should display Create and Edit buttons for admin user', () => {
+      const createButton: DebugElement = fixture.debugElement.queryAll(By.css('.ml1'))[0];
+      expect(createButton).toBeTruthy();
+      expect(createButton.nativeElement.textContent).toBe('Create');
 
-    const createButton = fixture.nativeElement.querySelector('button[routerLink="create"]');
+      const editButton: DebugElement = fixture.debugElement.queryAll(By.css('.ml1'))[2];
+      expect(editButton).toBeTruthy();
+      expect(editButton.nativeElement.textContent).toBe('Edit');
+    });
 
-    fixture.componentInstance.sessions$.subscribe();
+    it('should not display Create and Edit buttons for non-admin user', () => {
+      sessionService.sessionInformation = {
+        token: "",
+        type: "",
+        id: 1,
+        username: "",
+        firstName: "",
+        lastName: "",
+        admin: false
+      }
 
-    // expect(sessionApiServiceSpy).toHaveBeenCalled();
+      fixture.detectChanges();
 
-    //   .subscribe((sessionList: Session[]) => {
-    //   expect(sessionList).toBeGreaterThan(0);
-    //   console.log(1)
-    // }, error => console.log(error));
+      const createButton: DebugElement = fixture.debugElement.queryAll(By.css('.ml1'))[0];
+      expect(createButton).toBeTruthy();
+      expect(createButton.nativeElement.textContent).toBe('Detail');
 
-    // expect(createButton).toBeTruthy();
-
-    // console.log(fixture.componentInstance.sessions$)
-
-
-
-    const editButton = fixture.nativeElement.querySelector('button.mat-focus-indicator.mat-raised-button.mat-button-base.mat-primary.ng-star-inserted');
-    console.log(editButton)
-    // expect(editButton).toBeTruthy();
-  });
-
-  it('should not display Create and Edit buttons for non-admin user', () => {
-    mockSessionService.sessionInformation.admin = false;
-
-    fixture.detectChanges();
-
-    const createButton = fixture.nativeElement.querySelector('button[mat-raised-button][routerLink="create"]');
-    expect(createButton).toBeFalsy();
-
-    // is not false because it's value is NodeList{}
-    const editButton = fixture.nativeElement.querySelectorAll('button[mat-raised-button][routerLink^="update"]');
-    // expect(editButton).toBeFalsy();
+      const editButton: DebugElement = fixture.debugElement.queryAll(By.css('.ml1'))[1];
+      expect(editButton).toBeFalsy();
+    });
   });
 });

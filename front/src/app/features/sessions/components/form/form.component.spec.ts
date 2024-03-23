@@ -1,5 +1,5 @@
 import {HttpClientModule} from '@angular/common/http';
-import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {ReactiveFormsModule} from '@angular/forms';
 import {MatCardModule} from '@angular/material/card';
 import {MatFormFieldModule} from '@angular/material/form-field';
@@ -18,7 +18,6 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {Session} from "../../interfaces/session.interface";
 import {of} from "rxjs";
 import {ListComponent} from "../list/list.component";
-import {By} from "@angular/platform-browser";
 
 describe('FormComponent', () => {
   let component: FormComponent;
