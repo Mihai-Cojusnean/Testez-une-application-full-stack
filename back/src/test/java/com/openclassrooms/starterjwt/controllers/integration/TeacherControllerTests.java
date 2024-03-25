@@ -27,16 +27,11 @@ public class TeacherControllerTests {
     @Autowired
     private MockMvc mockMvc;
 
-    private static AuthenticationManager authenticationManager;
-    private static JwtUtils jwtUtils;
     private static String token;
 
     @BeforeAll
     static void setUpAll(@Autowired AuthenticationManager authenticationManager,
                          @Autowired JwtUtils jwtUtils) {
-        TeacherControllerTests.authenticationManager = authenticationManager;
-        TeacherControllerTests.jwtUtils = jwtUtils;
-
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         "yoga@studio.com",

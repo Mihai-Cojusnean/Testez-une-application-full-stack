@@ -101,7 +101,7 @@ describe('DetailComponent', () => {
 
       const deleteButton = fixture
         .debugElement.nativeElement.querySelector('.ml1')
-        .closest('button[mat-raised-button][color="warn"]');
+        .closest('button[color="warn"]');
       expect(deleteButton).toBeTruthy();
     });
   })
@@ -125,10 +125,15 @@ describe('DetailComponent', () => {
   describe('Participation', () => {
     let detailSpy: jest.SpyInstance;
     let teacherServiceSpy: jest.SpyInstance;
-    let mockTeacher: Teacher;
+    let mockTeacher: Teacher = {
+      id: 2,
+      lastName: 'Doe',
+      firstName: 'John',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
 
     beforeEach(() => {
-      mockTeacher = {id: 2, lastName: 'Doe', firstName: 'John', createdAt: new Date(), updatedAt: new Date(),};
       teacherServiceSpy = jest.spyOn(teacherService, "detail").mockReturnValue(of(mockTeacher));
       detailSpy = jest.spyOn(sessionApiService, "detail").mockReturnValue(of(sessionMock));
     })

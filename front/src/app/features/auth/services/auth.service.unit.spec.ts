@@ -4,21 +4,10 @@ import {TestBed} from "@angular/core/testing";
 import {RegisterRequest} from "../interfaces/registerRequest.interface";
 import {LoginRequest} from "../interfaces/loginRequest.interface";
 import {expect} from '@jest/globals';
-import {SessionInformation} from "../../../interfaces/sessionInformation.interface";
 
 describe('AuthService', () => {
   let authService: AuthService;
   let httpTestingController: HttpTestingController;
-
-  const sessionInformationMock: SessionInformation = {
-    token: '',
-    type: '',
-    id: 0,
-    username: '',
-    firstName: '',
-    lastName: '',
-    admin: false
-  }
 
   beforeEach(() => {
     TestBed.configureTestingModule({

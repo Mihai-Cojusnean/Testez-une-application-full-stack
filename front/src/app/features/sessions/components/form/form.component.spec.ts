@@ -88,7 +88,7 @@ describe('FormComponent', () => {
     let sessionApiServiceSpy: jest.SpyInstance;
 
     beforeEach(() => {
-      routerSpy = jest.spyOn(mockRouter, 'navigate');
+      routerSpy = jest.spyOn(mockRouter, 'navigate').mockImplementation();
       sessionApiServiceSpy = jest.spyOn(sessionApiService, 'detail').mockReturnValue(of(sessionMock));
     })
 
@@ -137,10 +137,14 @@ describe('FormComponent', () => {
   describe('Submit', () => {
     let routerSpy: jest.SpyInstance;
     let snackBarSpy: jest.SpyInstance;
-    let mockSession: {}
+    let mockSession = {
+      name: 'Test',
+      description: 'Description Test',
+      date: new Date(),
+      teacher_id: 2
+    };
 
     beforeEach(() => {
-      mockSession = {name: 'Test', description: 'Description Test', date: new Date(), teacher_id: 2};
       routerSpy = jest.spyOn(mockRouter, 'navigate').mockImplementation();
       snackBarSpy = jest.spyOn(snackBar, 'open');
     });

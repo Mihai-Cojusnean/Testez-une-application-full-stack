@@ -34,8 +34,6 @@ public class UserControllerTests {
     @Autowired
     private MockMvc mockMvc;
 
-    private static AuthenticationManager authenticationManager;
-    private static JwtUtils jwtUtils;
     private static UserRepository userRepository;
     private static String token;
     private static List<User> users;
@@ -45,9 +43,7 @@ public class UserControllerTests {
                          @Autowired PasswordEncoder passwordEncoder,
                          @Autowired AuthenticationManager authenticationManager,
                          @Autowired JwtUtils jwtUtils) {
-        UserControllerTests.authenticationManager = authenticationManager;
         UserControllerTests.userRepository = userRepository;
-        UserControllerTests.jwtUtils = jwtUtils;
 
         User userOne = new User()
                 .setEmail("admin@test.com")
@@ -95,8 +91,7 @@ public class UserControllerTests {
                 .perform(
                         MockMvcRequestBuilders
                                 .get("/api/user/{id}", user.getId())
-                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-                                .contentType(APPLICATION_JSON))
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.lastName").value("First name"))
                 .andReturn();
@@ -110,8 +105,7 @@ public class UserControllerTests {
                 .perform(
                         MockMvcRequestBuilders
                                 .delete("/api/user/{id}", user.getId())
-                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-                                .contentType(MediaType.APPLICATION_JSON))
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 }
