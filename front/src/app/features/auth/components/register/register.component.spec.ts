@@ -77,7 +77,16 @@ describe('RegisterComponent', () => {
     expect(component.onError).toBe(true);
   });
 
-  // Register (L’affichage d’erreur en l’absence d’un champ obligatoire) ❌
   it('should display a error message on', () => {
+    const authServiceSpy = jest.spyOn(authService, 'register')
+      .mockReturnValue(throwError(() => new Error('Registration error')));
+
+    component.submit();
+
+    fixture.detectChanges();
+
+    const errorMessageElement: HTMLElement = fixture.nativeElement.querySelector('.error');
+    expect(authServiceSpy).toHaveBeenCalled();
+    expect(errorMessageElement.textContent).toContain('An error occurred');
   });
 });

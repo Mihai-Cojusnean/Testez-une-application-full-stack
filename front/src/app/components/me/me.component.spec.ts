@@ -8,7 +8,6 @@ import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
 import {SessionService} from 'src/app/services/session.service';
 
 import {MeComponent} from './me.component';
-import {SessionInformation} from "../../interfaces/sessionInformation.interface";
 import {User} from "../../interfaces/user.interface";
 import {UserService} from "../../services/user.service";
 import {of} from "rxjs";
@@ -28,7 +27,7 @@ describe('MeComponent', () => {
       admin: true,
       id: 1
     },
-    logOut: jest.fn(), // <----------------------------  ok? for "should delete user account and navigate to home page"
+    logOut: jest.fn(),
   }
 
   const userMock: User = {

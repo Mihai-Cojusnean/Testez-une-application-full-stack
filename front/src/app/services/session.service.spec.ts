@@ -33,14 +33,18 @@ describe('SessionService', () => {
       admin: true
     };
     jest.spyOn(isLoggedSubject, 'next');
+
     service.logIn(user);
+
     expect(service.isLogged).toBeTruthy();
     expect(isLoggedSubject.next).toHaveBeenCalledWith(true);
   });
 
   it('should emit isLogged value correctly when calling logOut', () => {
     jest.spyOn(isLoggedSubject, 'next');
+
     service.logOut();
+
     expect(service.isLogged).toBeFalsy();
     expect(isLoggedSubject.next).toHaveBeenCalledWith(false);
   });

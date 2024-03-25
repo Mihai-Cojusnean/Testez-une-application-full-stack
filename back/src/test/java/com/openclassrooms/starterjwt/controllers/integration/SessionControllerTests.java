@@ -25,7 +25,10 @@ import java.util.Date;
 import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -42,15 +45,11 @@ public class SessionControllerTests {
 
     private final ObjectMapper mapper = new ObjectMapper();
 
-    private static AuthenticationManager authenticationManager;
-    private static JwtUtils jwtUtils;
     private static String token;
 
     @BeforeAll
     static void setUpAll(@Autowired AuthenticationManager authenticationManager,
                          @Autowired JwtUtils jwtUtils) {
-        SessionControllerTests.authenticationManager = authenticationManager;
-        SessionControllerTests.jwtUtils = jwtUtils;
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(

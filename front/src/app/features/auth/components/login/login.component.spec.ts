@@ -1,4 +1,4 @@
-import {HttpClientModule, HttpErrorResponse} from '@angular/common/http';
+import {HttpClientModule} from '@angular/common/http';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {ReactiveFormsModule} from '@angular/forms';
 import {MatCardModule} from '@angular/material/card';
@@ -81,6 +81,16 @@ describe('LoginComponent', () => {
   });
 
   it('should display error message on login error', () => {
+    const authServiceSpy = jest
+      .spyOn(authService, 'login')
+      .mockReturnValue(throwError(() => new Error('Login error')));
 
+    component.submit();
+
+    fixture.detectChanges();
+
+    const errorMessageElement: HTMLElement = fixture.nativeElement.querySelector('.error');
+    expect(authServiceSpy).toHaveBeenCalled();
+    expect(errorMessageElement.textContent).toContain('An error occurred');
   });
 });
